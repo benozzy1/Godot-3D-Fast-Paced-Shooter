@@ -94,6 +94,10 @@ public class Player : Spatial {
         
         if (Input.IsActionJustPressed("jump"))
             _jumpQueue = true;
+        
+        if (_moveDirection.Length() > 0 && !Gameplay.speedrunTimerStarted) {
+            Gameplay.speedrunTimerStarted = true;
+        }
     }
 
     public void MoveHorizontallyRelative(float speed, float accel) {
