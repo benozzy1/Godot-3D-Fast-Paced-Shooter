@@ -20,6 +20,9 @@ public class Player : Spatial {
     private Spatial _headParent;
     private Spatial _head;
     private Camera _camera;
+    private AudioStreamPlayer _audioStreamPlayer;
+
+    private bool temp;
 
     public override void _Ready() {
         Input.SetMouseMode(Input.MouseMode.Captured);
@@ -28,8 +31,13 @@ public class Player : Spatial {
         _headParent = GetNode("Smoothing/HeadParent") as Spatial;
         _head = _headParent.GetNode("Head") as Spatial;
         _camera = _head.GetNode("Camera") as Camera;
+        _audioStreamPlayer = GetNode("AudioStreamPlayer") as AudioStreamPlayer;
 
         InitializeStates();
+
+        Settings.LoadConfig();
+        Gameplay.speedrunTimerStarted = false;
+        Gameplay.speedrunTimer = 0;
     }
 
     public override void _Process(float delta) {
@@ -39,14 +47,14 @@ public class Player : Spatial {
             OS.WindowFullscreen = !OS.WindowFullscreen;
         //if (Input.IsKeyPressed((int)KeyList.Escape))
             //GetTree().Quit();
-    }
 
+        AnimateCamera(delta);    
+    }
+    
     public override void _PhysicsProcess(float delta) {
         stateMachine.Update(delta);
         velocity = _kinematicBody.MoveAndSlide(velocity, Vector3.Up);
         stateMachine.HandleTransitions();
-
-        AnimateCamera(delta);
     }
 
     public override void _Input(InputEvent @event) {
@@ -88,16 +96,25 @@ public class Player : Spatial {
     private Vector3 _moveDirection;
     private bool _jumpQueue;
     public void ProcessInput() {
-        _moveDirection.x = Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left");
-        _moveDirection.z = Input.GetActionStrength("move_backward") - Input.GetActionStrength("move_forward");
-        _moveDirection = _moveDirection.Normalized();
+        var input = new Vector2(
+            Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left"),
+            Input.GetActionStrength("move_backward") - Input.GetActionStrength("move_forward")
+        ).Normalized();
+
+        if (input.Length() > 0 && !Gameplay.speedrunTimerStarted && _kinematicBody.IsOnFloor() && !temp) {
+            temp = true;
+            Gameplay.speedrunTimerStarted = true;
+            _audioStreamPlayer.Play();
+        }
+
+        if (!temp)
+            return;
+
+        _moveDirection.x = input.x;
+        _moveDirection.z = input.y;
         
         if (Input.IsActionJustPressed("jump"))
             _jumpQueue = true;
-        
-        if (_moveDirection.Length() > 0 && !Gameplay.speedrunTimerStarted) {
-            Gameplay.speedrunTimerStarted = true;
-        }
     }
 
     public void MoveHorizontallyRelative(float speed, float accel) {
@@ -124,4 +141,13 @@ public class Player : Spatial {
     public bool CanJump() => _jumpQueue;
     public bool CanCrouch() => true;
     public bool CanUncrouch() => true;
+
+    public void SetVolume(float volume) {
+        _audioStreamPlayer.VolumeDb = (Settings.musicVolume * 80) - 80;
+    }
+
+    private void _OnFinishAreaEntered(KinematicBody body) {
+        _audioStreamPlayer.Stop();
+        Gameplay.speedrunTimerStarted = false;
+    }
 }

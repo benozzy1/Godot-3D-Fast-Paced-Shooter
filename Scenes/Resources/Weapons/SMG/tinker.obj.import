@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/tinker.obj-694fc34461e02157057cbb30258faf66.mesh"
+
+[deps]
+
+files=[ "res://.import/tinker.obj-694fc34461e02157057cbb30258faf66.mesh" ]
+
+source_file="res://Scenes/Resources/Weapons/SMG/tinker.obj"
+dest_files=[ "res://.import/tinker.obj-694fc34461e02157057cbb30258faf66.mesh", "res://.import/tinker.obj-694fc34461e02157057cbb30258faf66.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true
