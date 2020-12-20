@@ -12,7 +12,7 @@ public class Settings : Control {
     private string _configText;
 
     public override void _Ready() {
-        _player = GetTree().Root.GetNode("World").GetNode("Player") as Player;
+        _player = GetParent() as Player;
         UpdateUI();
     }
 
@@ -61,7 +61,7 @@ public class Settings : Control {
     }
 
     private void _OnQuitButtonPressed() {
-        GetTree().Quit();
+        GetTree().ChangeScene("res://Scenes/Menus/MainMenu.scn");
     }
 
     private void _OnAudioSliderValueChanged(float value) {
@@ -76,7 +76,7 @@ public class Settings : Control {
 
         var volumeSlider = GetNode("Panel/VBoxContainer/VolumeSlider") as Slider; 
         volumeSlider.Value = musicVolume;
-        _player.SetVolume(musicVolume);
         ((Label)volumeSlider.GetNode("Label")).Text = (musicVolume * 100).ToString() + "%";
+        _player.UpdateVolume();
     }
 }
