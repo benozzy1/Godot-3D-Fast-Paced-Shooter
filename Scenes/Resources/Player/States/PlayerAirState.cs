@@ -23,20 +23,19 @@ public class PlayerAirState : IState {
         var norVel = _player.velocity.Normalized();
         if (norVel != Vector3.Zero)
             _player.SetWallCastDir(norVel);
-
-        GD.Print(_player.velocity.y);
-        if (Input.IsActionJustReleased("jump") && _player.velocity.y > 5)
-            _player.velocity.y = 6;
+            
+        //if (Input.IsActionJustReleased("jump") && _player.velocity.y > 5)
+            //_player.velocity.y = 6;
     }
 
     public void HandleTransitions() {
-        var kinematicBody = _player.GetKinematicBody();
+        var kinematicBody = _player.kinematicBody;
         if (kinematicBody.IsOnFloor())
-            _player.stateMachine.ChangeState(_player.groundState);
+            _player.stateMachine.ChangeState(_player.stateMachine.groundState);
         else if (_player.WallCastColliding()) {
-            _player.stateMachine.ChangeState(_player.wallState);
+            _player.stateMachine.ChangeState(_player.stateMachine.wallState);
         } else if (Input.IsActionJustPressed("use_grapple"))
-            _player.stateMachine.ChangeState(_player.grappleState);
+            _player.stateMachine.ChangeState(_player.stateMachine.grappleState);
     }
 
     public void Exit() {

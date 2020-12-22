@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Windows 9x.png-557c81e612bcdd62a1e9a1a8933ede9f.stex"
+path="res://.import/UIAtlas.png-840aecc79a61ac64d862f2a7eaccdb6f.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Media/Windows 9x.png"
-dest_files=[ "res://.import/Windows 9x.png-557c81e612bcdd62a1e9a1a8933ede9f.stex" ]
+source_file="res://Assets/Media/UIAtlas.png"
+dest_files=[ "res://.import/UIAtlas.png-840aecc79a61ac64d862f2a7eaccdb6f.stex" ]
 
 [params]
 

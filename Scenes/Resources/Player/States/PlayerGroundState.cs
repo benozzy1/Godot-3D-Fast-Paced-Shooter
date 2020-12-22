@@ -9,17 +9,16 @@ public class PlayerGroundState : IState {
 
     public void Enter() {
         GD.Print("ENTER GROUND STATE");
-        _player.Land();
     }
 
     public void Update(float delta) {
-        //_player.velocity += -_player.GetKinematicBody().GetFloorNormal() * _player.gravity * delta;
-        _player.velocity += -_player.GetKinematicBody().GetFloorNormal();
-        //GD.Print(_player.GetKinematicBody().GetFloorNormal());
+        //_player.velocity += -_player.kinematicBody.GetFloorNormal() * _player.gravity * delta;
+        _player.velocity += -_player.kinematicBody.GetFloorNormal();
+        //GD.Print(_player.kinematicBody.GetFloorNormal());
         _player.MoveRelative(_player.speed, _player.acceleration * delta);
 
         if (Input.IsActionPressed("jump") && _player.CanJump()) {
-            var normal = _player.GetKinematicBody().GetFloorNormal();
+            var normal = _player.kinematicBody.GetFloorNormal();
             _player.velocity += normal * _player.jumpForce;
             _player.velocity.y = _player.jumpForce * normal.y;
 
@@ -36,11 +35,11 @@ public class PlayerGroundState : IState {
     }
 
     public void HandleTransitions() {
-        var kinematicBody = _player.GetKinematicBody();
+        var kinematicBody = _player.kinematicBody;
         if (!kinematicBody.IsOnFloor())
-            _player.stateMachine.ChangeState(_player.airState);
+            _player.stateMachine.ChangeState(_player.stateMachine.airState);
         else if (Input.IsActionJustPressed("use_grapple"))
-            _player.stateMachine.ChangeState(_player.grappleState);
+            _player.stateMachine.ChangeState(_player.stateMachine.grappleState);
     }
 
     public void Exit() {

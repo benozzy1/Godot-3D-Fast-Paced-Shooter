@@ -29,7 +29,7 @@ public class PlayerGrappleState : IState {
 
     public void HandleTransitions() {
         if (Input.IsActionJustReleased("use_grapple"))
-            _player.stateMachine.ChangeState(_player.airState);
+            _player.stateMachine.ChangeState(_player.stateMachine.airState);
     }
 
     public void Exit() {

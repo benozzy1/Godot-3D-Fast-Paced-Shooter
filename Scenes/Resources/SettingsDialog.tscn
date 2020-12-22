@@ -59,8 +59,8 @@ __meta__ = {
 }
 
 [node name="Button" type="Button" parent="Titlebar/WindowButtons"]
-margin_right = 40.4813
-margin_bottom = 54.6435
+margin_right = 4.11239
+margin_bottom = 21.0985
 
 [node name="WindowContent" type="Control" parent="."]
 anchor_right = 1.0

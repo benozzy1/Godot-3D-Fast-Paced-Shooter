@@ -10,19 +10,20 @@ public class Player : Spatial {
     [Export] public float jumpForce = 10f;
 
     [Export] public float cameraTilt = 0.25f;
-    [Export] public float weaponSmoothing = 16f;
+    [Export] public float weaponSmoothing = 18f;
     [Export] public float walkAnimSpeed = 1.25f;
 
-    [Export] public AudioStream[] footstepSounds;
-
-    public StateMachine stateMachine;
+    [Export] public AudioStream[] footstepSounds;    
 
     public Vector3 velocity;
 
-    private KinematicBody _kinematicBody;
+    public KinematicBody kinematicBody;
+    public Camera camera;
+    public PlayerStateMachine stateMachine;
+    public PlayerCameraAnimator cameraAnimator;
+
     private Spatial _headParent;
     private Spatial _head;
-    private Camera _camera;
     private AudioStreamPlayer _audioStreamPlayer;
     private Vector3 _weaponHolderStartPos;
     private ImmediateGeometry _debugLine;
@@ -35,13 +36,13 @@ public class Player : Spatial {
     public override void _Ready() {
         Input.SetMouseMode(Input.MouseMode.Captured);
 
-        _kinematicBody = GetNode("KinematicBody") as KinematicBody;
-        _wallCast = _kinematicBody.GetNode("WallCast") as RayCast;
+        kinematicBody = GetNode("KinematicBody") as KinematicBody;
+        _wallCast = kinematicBody.GetNode("WallCast") as RayCast;
 
         _headParent = GetNode("Smoothing/HeadParent") as Spatial;
         _head = _headParent.GetNode("Head") as Spatial;
-        _camera = _head.GetNode("Camera") as Camera;
-        _grappleCast = _camera.GetNode("GrappleCast") as RayCast;
+        camera = _head.GetNode("Camera") as Camera;
+        _grappleCast = camera.GetNode("GrappleCast") as RayCast;
         _audioStreamPlayer = GetNode("AudioStreamPlayer") as AudioStreamPlayer;
 
         _weaponOffset = GetNode("Smoothing/WeaponOffset") as Spatial;
@@ -50,7 +51,9 @@ public class Player : Spatial {
 
         _debugLine = GetNode("ImmediateGeometry") as ImmediateGeometry;
 
-        InitializeStates();
+        var components = GetNode("AdditionalComponents");
+        stateMachine = components.GetNode("StateMachine") as PlayerStateMachine;
+        cameraAnimator = components.GetNode("CameraAnimator") as PlayerCameraAnimator;
 
         Settings.LoadConfig();
         Gameplay.speedrunTimerStarted = false;
@@ -67,30 +70,37 @@ public class Player : Spatial {
         }
         //if (Input.IsKeyPressed((int)KeyList.Escape))
             //GetTree().Quit();
-
-        AnimateCamera(delta);
+        
         SwayWeapon(delta);
     }
-    
+ 
+    public bool justLanded;
     public override void _PhysicsProcess(float delta) {
         //DetectCollision();
 
+        var wasOnFloor = kinematicBody.IsOnFloor();
+        var lastVelocity = velocity;
+
         stateMachine.Update(delta);
-        velocity = _kinematicBody.MoveAndSlide(velocity, Vector3.Up);
+        velocity = kinematicBody.MoveAndSlide(velocity, Vector3.Up);
         stateMachine.HandleTransitions();
 
-        if (_kinematicBody.GetFloorNormal() != Vector3.Zero)
-            _lastFloorNormal = _kinematicBody.GetFloorNormal();
+        if (kinematicBody.GetFloorNormal() != Vector3.Zero)
+            _lastFloorNormal = kinematicBody.GetFloorNormal();
         else
             _lastFloorNormal = Vector3.Up;
         
-        if (_kinematicBody.IsOnWall())
-            SetWallCastDir(-_kinematicBody.GetSlideCollision(0).Normal);
+        if (kinematicBody.IsOnWall())
+            SetWallCastDir(-kinematicBody.GetSlideCollision(0).Normal);
+        
+        if (kinematicBody.IsOnFloor() && !wasOnFloor) {
+            Land(lastVelocity.y);
+        }
     }
 
     private void DetectCollision() {
-        if (_kinematicBody.GetSlideCount() > 0) {
-            var normal = _kinematicBody.GetSlideCollision(0).Normal;
+        if (kinematicBody.GetSlideCount() > 0) {
+            var normal = kinematicBody.GetSlideCollision(0).Normal;
             velocity -= normal * velocity.Dot(normal);
         }
     }
@@ -108,62 +118,9 @@ public class Player : Spatial {
         }
     }
 
-    public IState groundState;
-    public IState airState;
-    public IState wallState;
-    public IState grappleState;
-    private void InitializeStates() {
-        groundState = new PlayerGroundState(this);
-        airState = new PlayerAirState(this);
-        wallState = new PlayerWallState(this);
-        grappleState = new PlayerGrappleState(this);
-
-        stateMachine = new StateMachine();
-        stateMachine.ChangeState(airState);
-    }
-
-    private Vector3 _cameraRotOffset;
-    private Vector3 _cameraPosOffset;
-    private float _walkStep;
-
     private Vector3 _lastCameraRot;
     private Vector3 _deltaCameraRot;
-    private void AnimateCamera(float delta) {
-        var localVelocity = GetLocalVelocity();
 
-        var yVel = localVelocity.y;
-        if (_kinematicBody.IsOnFloor())
-            yVel = 0;
-        _cameraRotOffset = _cameraRotOffset.LinearInterpolate(
-            new Vector3(localVelocity.z + yVel, 0, -localVelocity.x) * cameraTilt,
-            acceleration * delta
-        );
-
-        var hVel = velocity;
-        hVel.y = 0;
-
-        var stepSpeed = _kinematicBody.IsOnFloor() ? (hVel.Length() / speed) * walkAnimSpeed : 0;
-
-        var lastWalkStep = _walkStep;
-        if (_kinematicBody.IsOnFloor())
-            _walkStep += stepSpeed * speed * delta;
-
-        var defaultPos = Vector3.Zero;
-        var swayPos = new Vector3(Mathf.Sin(_walkStep), Mathf.Abs(Mathf.Cos(_walkStep)), 0) * 0.125f;
-
-        _cameraPosOffset = _cameraPosOffset.LinearInterpolate(defaultPos + swayPos * stepSpeed, acceleration * delta);
-
-        _lastCameraRot = _camera.RotationDegrees;
-
-        _camera.RotationDegrees = _cameraRotOffset;
-        _camera.Translation = _cameraPosOffset;
-
-        _deltaCameraRot = _camera.RotationDegrees - _lastCameraRot;
-
-        if (Mathf.Sign(Mathf.Sin(_walkStep * 1.25f)) != Mathf.Sign(Mathf.Sin(lastWalkStep * 1.25f))) {
-            //PlayRandomFootstepSound();
-        }
-    }
 
     private Spatial _weaponHolder;
     private Spatial _weaponOffset;
@@ -180,12 +137,13 @@ public class Player : Spatial {
             0
         );
 
+        var localVelocity = GetLocalVelocity();
         var posOffset = 
-            -_camera.GlobalTransform.basis.z * 1f 
-            + _camera.GlobalTransform.basis.x * 1f
-            + _camera.GlobalTransform.basis.y * -0.75f;
+            -camera.GlobalTransform.basis.z * 1f + _headParent.GlobalTransform.basis.z * -(localVelocity.z / (gravity * 2))
+            + camera.GlobalTransform.basis.x * 1f + _headParent.GlobalTransform.basis.x * -(localVelocity.x / (gravity * 2))
+            + camera.GlobalTransform.basis.y * -0.75f + _headParent.GlobalTransform.basis.y * -(localVelocity.y / (gravity * 2));
 
-        _weaponHolder.Translation = _weaponHolder.Translation.LinearInterpolate(posOffset, 18 * delta);
+        _weaponHolder.Translation = _weaponHolder.Translation.LinearInterpolate(posOffset, 35 * delta);
         // var transform = _weaponHolder.GlobalTransform;
         // transform.origin = transform.origin.LinearInterpolate(_camera.GlobalTransform.origin - posOffset, acceleration * 3 * delta);
         // _weaponHolder.GlobalTransform = transform;
@@ -202,7 +160,7 @@ public class Player : Spatial {
         );
         input = input.Clamped(1);
 
-        if (input.Length() > 0 && !Gameplay.speedrunTimerStarted && _kinematicBody.IsOnFloor() && !temp) {
+        if (input.Length() > 0 && !Gameplay.speedrunTimerStarted && kinematicBody.IsOnFloor() && !temp) {
             temp = true;
             Gameplay.speedrunTimerStarted = true;
             _audioStreamPlayer.Play();
@@ -239,7 +197,7 @@ public class Player : Spatial {
 
         velocity.x = Mathf.Lerp(velocity.x, dir.x * speed, accel);
         velocity.z = Mathf.Lerp(velocity.z, dir.z * speed, accel);
-        if (_kinematicBody.IsOnFloor())
+        if (kinematicBody.IsOnFloor())
             velocity.y = Mathf.Lerp(velocity.y, dir.y * speed, accel);
     }
 
@@ -253,18 +211,17 @@ public class Player : Spatial {
     }
 
     public void Crouch(float delta) {
-        _camera.Translation = _camera.Translation.LinearInterpolate(new Vector3(0, -1, 0), acceleration * delta);
+        camera.Translation = camera.Translation.LinearInterpolate(new Vector3(0, -1, 0), acceleration * delta);
     }
 
     public void Uncrouch(float delta) {
-        _camera.Translation = _camera.Translation.LinearInterpolate(new Vector3(0, 0, 0), acceleration * delta);
+        camera.Translation = camera.Translation.LinearInterpolate(new Vector3(0, 0, 0), acceleration * delta);
     }
 
     public void ResetJumpQueue() => _jumpQueue = false;
 
     public Vector3 GetLocalVelocity() => velocity.Rotated(Vector3.Up, -_headParent.Rotation.y);
 
-    public KinematicBody GetKinematicBody() => _kinematicBody;
     public bool CanJump() => _jumpQueue;
     public bool CanCrouch() => true;
     public bool CanUncrouch() => true;
@@ -279,11 +236,7 @@ public class Player : Spatial {
         Gameplay.speedrunTimerStarted = false;
     }
 
-    public void Land() {
-        _cameraPosOffset.y = 0;
-    }
-
-    public bool WallCastColliding() => _wallCast.IsColliding() || _kinematicBody.IsOnWall();
+    public bool WallCastColliding() => _wallCast.IsColliding() || kinematicBody.IsOnWall();
     public void SetWallCastDir(Vector3 dir) {
         _wallCast.Rotation = Vector3.Up * (Mathf.Atan2(-dir.z, dir.x) - Mathf.Deg2Rad(90));
     }
@@ -312,5 +265,9 @@ public class Player : Spatial {
         GetTree().Root.AddChild(streamPlayer);
         streamPlayer.Stream = audioStream;
         streamPlayer.Play();
+    }
+
+    public void Land(float landForce) {
+        cameraAnimator.Land(landForce);
     }
 }

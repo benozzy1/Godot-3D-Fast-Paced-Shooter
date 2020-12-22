@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Windows 9x.png-557c81e612bcdd62a1e9a1a8933ede9f.stex"
+path="res://.import/WindowsLoginScreen.png-f118d4ec74f25e0583e64cfce7b061d6.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Media/Windows 9x.png"
-dest_files=[ "res://.import/Windows 9x.png-557c81e612bcdd62a1e9a1a8933ede9f.stex" ]
+source_file="res://Assets/Media/WindowsLoginScreen.png"
+dest_files=[ "res://.import/WindowsLoginScreen.png-f118d4ec74f25e0583e64cfce7b061d6.stex" ]
 
 [params]
 

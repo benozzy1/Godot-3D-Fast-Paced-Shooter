@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Windows 9x.png-557c81e612bcdd62a1e9a1a8933ede9f.stex"
+path="res://.import/HSeparator.png-1fd0d860de29b6fa5e00f6f3b90adbac.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Media/Windows 9x.png"
-dest_files=[ "res://.import/Windows 9x.png-557c81e612bcdd62a1e9a1a8933ede9f.stex" ]
+source_file="res://Assets/Media/HSeparator.png"
+dest_files=[ "res://.import/HSeparator.png-1fd0d860de29b6fa5e00f6f3b90adbac.stex" ]
 
 [params]
 

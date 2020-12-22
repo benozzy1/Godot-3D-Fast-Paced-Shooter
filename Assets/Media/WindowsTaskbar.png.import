@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Windows 9x.png-557c81e612bcdd62a1e9a1a8933ede9f.stex"
+path="res://.import/WindowsTaskbar.png-32bb5a36f64ea44f4af566ec32cc93f4.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Media/Windows 9x.png"
-dest_files=[ "res://.import/Windows 9x.png-557c81e612bcdd62a1e9a1a8933ede9f.stex" ]
+source_file="res://Assets/Media/WindowsTaskbar.png"
+dest_files=[ "res://.import/WindowsTaskbar.png-32bb5a36f64ea44f4af566ec32cc93f4.stex" ]
 
 [params]
 

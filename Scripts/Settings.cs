@@ -12,7 +12,7 @@ public class Settings : Control {
     private string _configText;
 
     public override void _Ready() {
-        _player = GetParent() as Player;
+        _player = GetParent().GetParent().GetParent() as Player;
         UpdateUI();
     }
 
@@ -70,6 +70,8 @@ public class Settings : Control {
     }
 
     public void UpdateUI() {
+        return;
+
         var sensitivitySlider = GetNode("Panel/VBoxContainer/SensitivitySlider") as Slider;
         sensitivitySlider.Value = mouseSensitivity;
         ((Label)sensitivitySlider.GetNode("Label")).Text = mouseSensitivity.ToString() + "%";

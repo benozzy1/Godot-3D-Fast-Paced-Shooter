@@ -45,7 +45,7 @@ _global_script_class_icons={
 [application]
 
 config/name="3D Fast-Paced Shooter"
-run/main_scene="res://Scenes/Menus/MainMenu.scn"
+run/main_scene="res://Scenes/Screens/LoginScreen.scn"
 config/icon="res://icon.png"
 
 [autoload]
@@ -56,9 +56,12 @@ UserData="*res://addons/github-integration/scripts/user_data.gd"
 RestHandler="*res://addons/github-integration/scenes/RestHandler.tscn"
 Gameplay="*res://Scripts/Gameplay.cs"
 DrawLine3d="*res://addons/Godot-3D-Lines-master/DrawLine3D.gd"
+WindowManager="*res://Scripts/WindowManager.gd"
 
 [display]
 
+window/size/width=1280
+window/size/height=720
 window/vsync/use_vsync=false
 window/stretch/mode="viewport"
 window/stretch/aspect="expand"
@@ -70,6 +73,7 @@ enabled=PoolStringArray( "github-integration", "smoothing" )
 [gui]
 
 theme/custom="res://Themes/TestTheme.theme"
+theme/custom_font="res://Assets/Fonts/Font.tres"
 
 [input]
 
@@ -153,6 +157,10 @@ look_right={
 "events": [ Object(InputEventJoypadMotion,"resource_local_to_scene":false,"resource_name":"","device":0,"axis":2,"axis_value":1.0,"script":null)
  ]
 }
+
+[physics]
+
+3d/default_gravity=30.0
 
 [rendering]
 

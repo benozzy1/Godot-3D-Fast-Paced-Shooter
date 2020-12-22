@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Windows 9x.png-557c81e612bcdd62a1e9a1a8933ede9f.stex"
+path="res://.import/Windows_95_at_first_run.png-3176fe4a6e8eacb693fc8912e587fc2b.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Media/Windows 9x.png"
-dest_files=[ "res://.import/Windows 9x.png-557c81e612bcdd62a1e9a1a8933ede9f.stex" ]
+source_file="res://Assets/Media/Windows_95_at_first_run.png"
+dest_files=[ "res://.import/Windows_95_at_first_run.png-3176fe4a6e8eacb693fc8912e587fc2b.stex" ]
 
 [params]
 

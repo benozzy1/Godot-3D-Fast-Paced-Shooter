@@ -15,7 +15,7 @@ public class PlayerWallState : IState {
     }
 
     public void Update(float delta) {
-        var kinematicBody = _player.GetKinematicBody();
+        var kinematicBody = _player.kinematicBody;
         if (_player.WallCastColliding()) {
             _player.velocity += Vector3.Down * _player.wallGravity * delta;
             _player.velocity.y = Mathf.Clamp(_player.velocity.y, minYAccel, maxYAccel);
@@ -36,11 +36,11 @@ public class PlayerWallState : IState {
     }
 
     public void HandleTransitions() {
-        var kinematicBody = _player.GetKinematicBody();
+        var kinematicBody = _player.kinematicBody;
         if (kinematicBody.IsOnFloor())
-            _player.stateMachine.ChangeState(_player.groundState);
+            _player.stateMachine.ChangeState(_player.stateMachine.groundState);
         else if (!_player.WallCastColliding())
-            _player.stateMachine.ChangeState(_player.airState);
+            _player.stateMachine.ChangeState(_player.stateMachine.airState);
     }
 
     public void Exit() {

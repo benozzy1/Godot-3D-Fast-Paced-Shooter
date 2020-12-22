@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/weiurdgun.obj-aba92bc664a4de076535816ad96e6c3f.mesh"
+
+[deps]
+
+files=[ "res://.import/weiurdgun.obj-aba92bc664a4de076535816ad96e6c3f.mesh" ]
+
+source_file="res://Assets/Models/weiurdgun.obj"
+dest_files=[ "res://.import/weiurdgun.obj-aba92bc664a4de076535816ad96e6c3f.mesh", "res://.import/weiurdgun.obj-aba92bc664a4de076535816ad96e6c3f.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 0.1, 0.1, 0.1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true
