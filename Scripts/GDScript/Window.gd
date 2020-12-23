@@ -67,7 +67,7 @@ func _input(event):
 		mouse_pos = event.position;
 		mouse_motion = event.relative;
 		
-		print(mouse_pos - (original_rect_position + drag_offset))
+		#print(mouse_pos - (original_rect_position + drag_offset))
 		
 		if dragging:
 			rect_position = event.position + drag_offset;

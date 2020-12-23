@@ -32,7 +32,7 @@ _global_script_classes=[ {
 "base": "Control",
 "class": "Settings",
 "language": "GDScript",
-"path": "res://Scripts/Settings.gd"
+"path": "res://Scripts/GDScript/Settings.gd"
 } ]
 _global_script_class_icons={
 "ContributorClass": "",
@@ -45,7 +45,11 @@ _global_script_class_icons={
 [application]
 
 config/name="3D Fast-Paced Shooter"
-run/main_scene="res://Scenes/Screens/LoginScreen.scn"
+run/main_scene="res://Scenes/ParentScene.tscn"
+boot_splash/image="res://Assets/Media/icon.png"
+boot_splash/fullsize=false
+boot_splash/use_filter=false
+boot_splash/bg_color=Color( 0, 0, 0, 1 )
 config/icon="res://icon.png"
 
 [autoload]
@@ -54,14 +58,15 @@ PluginSettings="*res://addons/github-integration/scripts/PluginSettings.gd"
 IconLoaderGithub="*res://addons/github-integration/scripts/IconLoaderGithub.gd"
 UserData="*res://addons/github-integration/scripts/user_data.gd"
 RestHandler="*res://addons/github-integration/scenes/RestHandler.tscn"
-Gameplay="*res://Scripts/Gameplay.cs"
+Gameplay="*res://Scripts/CS/Game/Gameplay.cs"
 DrawLine3d="*res://addons/Godot-3D-Lines-master/DrawLine3D.gd"
-WindowManager="*res://Scripts/WindowManager.gd"
+DisplayManager="*res://Scripts/CS/OS/DisplayManager.cs"
 
 [display]
 
 window/size/width=1280
 window/size/height=720
+window/size/fullscreen=true
 window/vsync/use_vsync=false
 window/stretch/mode="viewport"
 window/stretch/aspect="expand"
@@ -165,4 +170,5 @@ look_right={
 [rendering]
 
 quality/2d/use_pixel_snap=true
+environment/default_clear_color=Color( 0, 0.509804, 0.509804, 1 )
 environment/default_environment="res://default_env.tres"
