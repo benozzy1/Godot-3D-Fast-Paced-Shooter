@@ -18,7 +18,7 @@ public class PlayerAirState : IState {
         _player.velocity += Vector3.Down * _player.gravity * delta;
         _player.velocity.y = Mathf.Clamp(_player.velocity.y, minYAccel, maxYAccel);
 
-        _player.MoveRelative(_player.speed, _player.airAcceleration * delta);
+        _player.MoveRelative(_player.GetMoveSpeed(), _player.airAcceleration * delta);
 
         var norVel = _player.velocity.Normalized();
         if (norVel != Vector3.Zero)

@@ -15,7 +15,7 @@ public class PlayerGroundState : IState {
         //_player.velocity += -_player.kinematicBody.GetFloorNormal() * _player.gravity * delta;
         _player.velocity += -_player.kinematicBody.GetFloorNormal();
         //GD.Print(_player.kinematicBody.GetFloorNormal());
-        _player.MoveRelative(_player.speed, _player.acceleration * delta);
+        _player.MoveRelative(_player.GetMoveSpeed(), _player.acceleration * delta);
 
         if (Input.IsActionPressed("jump") && _player.CanJump()) {
             var normal = _player.kinematicBody.GetFloorNormal();

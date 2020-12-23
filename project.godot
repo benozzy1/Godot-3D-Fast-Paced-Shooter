@@ -60,7 +60,6 @@ UserData="*res://addons/github-integration/scripts/user_data.gd"
 RestHandler="*res://addons/github-integration/scenes/RestHandler.tscn"
 Gameplay="*res://Scripts/CS/Game/Gameplay.cs"
 DrawLine3d="*res://addons/Godot-3D-Lines-master/DrawLine3D.gd"
-DisplayManager="*res://Scripts/CS/OS/DisplayManager.cs"
 
 [display]
 

@@ -45,7 +45,7 @@ public class PlayerCameraAnimator : Node {
 
         var lastWalkStep = _walkStep;
         if (player.kinematicBody.IsOnFloor())
-            _walkStep += stepSpeed * player.speed * delta;
+            _walkStep += stepSpeed * player.GetMoveSpeed() * delta;
 
         var defaultPos = Vector3.Zero;
         var swayPos = new Vector3(Mathf.Sin(_walkStep), Mathf.Abs(Mathf.Cos(_walkStep)), 0) * 0.05f;
