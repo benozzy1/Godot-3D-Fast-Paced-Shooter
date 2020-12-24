@@ -42,8 +42,8 @@
           <e p="GameManager.cs" t="Include" />
           <e p="OS" t="Include">
             <e p="DialogWindow.cs" t="Include" />
-            <e p="DisplayManager.cs" t="Include" />
             <e p="Screen.cs" t="Include" />
+            <e p="ScreenManager.cs" t="Include" />
             <e p="Window.cs" t="Include" />
             <e p="WindowManager.cs" t="Include" />
           </e>

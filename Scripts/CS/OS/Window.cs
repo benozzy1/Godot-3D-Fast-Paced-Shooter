@@ -40,8 +40,6 @@ public class Window : Control {
 
     public Vector2 velocity;
 
-    private WindowManager _windowManager;
-
     private Tween _tween;
 
     public override void _Ready() {
@@ -53,8 +51,6 @@ public class Window : Control {
 
         _originalRectPos = RectPosition;
         _originalRectSize = RectSize;
-
-        _windowManager = DisplayManager.GetWindowManager();
 
         ((Control)GetNode("BorderDraggables")).Visible = resizable;
     }
@@ -194,7 +190,7 @@ public class Window : Control {
     
     private void _on_CloseButton_pressed() {
         if (quitClosesWindow)
-            Close();
+            GameManager.windowManager.CloseWindow(this);
     }
     private void _OnTitlebarGuiInput(InputEvent e) {
         if (!(e is InputEventMouseButton btn)) return; // Don't run if event is not mouse button
@@ -263,14 +259,15 @@ public class Window : Control {
     }
 
     public void Open() {
+        //GameManager.screenManager.GetWindowManager().AddWindow(this);
         _tween.Start();
-        _tween.InterpolateProperty(this, "modulate", Modulate, new Color(1, 1, 1, 1), 0.25f);
+        _tween.InterpolateProperty(this, "modulate", Modulate, new Color(1, 1, 1, 1), 0.5f, Tween.TransitionType.Sine);
         CenterWindow();
     }
 
     public void Close() {
         _tween.Start();
-        _tween.InterpolateProperty(this, "modulate", Modulate, new Color(1, 1, 1, 0), 0.25f);
+        _tween.InterpolateProperty(this, "modulate", Modulate, new Color(1, 1, 1, 0), 0.5f, Tween.TransitionType.Sine);
         _tween.Connect("tween_completed", this, "_OnTweenCompleted");
     }
 

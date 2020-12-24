@@ -2,7 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-public class WindowManager {
+public class WindowManager : Control {
     private const string WindowsDirectory = "res://Scenes/Windows/";
     private const string DialogsDirectory = "res://Scenes/Windows/Dialog/";
     private const string WindowSuffix = ".res";
@@ -11,13 +11,18 @@ public class WindowManager {
     public List<DialogWindow> dialogWindows = new List<DialogWindow>();
 
     private Window _windowLimitWindow;
-    private readonly Control _windowsNode;
+    private Control _windowsNode;
 
-    public WindowManager(DisplayManager displayManager) {
+    public override void _Ready() {
+        SetAnchorsAndMarginsPreset(LayoutPreset.Wide);
+        CreateWindowsNode();
+    }
+
+    private void CreateWindowsNode() {
         _windowsNode = new Control {Name = "Windows"};
         _windowsNode.SetAnchorsAndMarginsPreset(Control.LayoutPreset.Wide);
         _windowsNode.MouseFilter = Control.MouseFilterEnum.Ignore;
-        displayManager.viewport.AddChild(_windowsNode);
+        AddChild(_windowsNode);
     }
 
     public void CreateWindow(string windowName) {
@@ -41,8 +46,14 @@ public class WindowManager {
     }
 
     public void CloseAllWindows() {
+        var windowsToRemove = new List<Window>();
         foreach (var window in _windows) {
             window.Close();
+            windowsToRemove.Add(window);
+        }
+
+        foreach (var window in windowsToRemove) {
+            _windows.Remove(window);
         }
     }
 
@@ -69,5 +80,10 @@ public class WindowManager {
 
         var windowClass = windowScene as Window;
         windowClass?.Open();
+    }
+
+    public void CloseWindow(Window window) {
+        window.Close();
+        _windows.Remove(window);
     }
 }

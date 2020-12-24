@@ -2,8 +2,23 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8f8a1ae3-508e-4409-8f6a-0b986076a710" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/Assets/Media/Windows7LogoffSound.ogg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Media/Windows7LogoffSound.ogg.import" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Media/Windows7LogonSound.ogg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Media/Windows7LogonSound.ogg.import" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Scenes/Screens/Screen.scn" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.3D Fast-Paced Shooter/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.3D Fast-Paced Shooter/.idea/contentModel.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.3D Fast-Paced Shooter/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.3D Fast-Paced Shooter/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scenes/Screens/BootScreen.scn" beforeDir="false" afterPath="$PROJECT_DIR$/Scenes/Screens/BootScreen.scn" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scenes/Screens/HomeScreen.scn" beforeDir="false" afterPath="$PROJECT_DIR$/Scenes/Screens/HomeScreen.scn" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scenes/Screens/LoginScreen.scn" beforeDir="false" afterPath="$PROJECT_DIR$/Scenes/Screens/LoginScreen.scn" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scenes/Windows/LoginWindow.res" beforeDir="false" afterPath="$PROJECT_DIR$/Scenes/Windows/LoginWindow.res" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/CS/GameManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/CS/GameManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/CS/OS/DisplayManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/CS/OS/ScreenManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/CS/OS/Screen.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/CS/OS/Screen.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/CS/OS/Window.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/CS/OS/Window.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/CS/OS/WindowManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/CS/OS/WindowManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project.godot" beforeDir="false" afterPath="$PROJECT_DIR$/project.godot" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -12,6 +27,15 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <changedPaths>
+      <option value="$PROJECT_DIR$/Scripts/CS/GameManager.cs" />
+      <option value="$PROJECT_DIR$/Scripts/CS/OS/WindowManager.cs" />
+      <option value="$PROJECT_DIR$/Scripts/CS/OS/Window.cs" />
+      <option value="$PROJECT_DIR$/Scripts/CS/OS/ScreenManager.cs" />
+      <option value="$PROJECT_DIR$/Scripts/CS/OS/Screen.cs" />
+    </changedPaths>
   </component>
   <component name="ProjectId" id="1m4BRRe1EplcJPSd7XAI0onENa7" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
@@ -68,6 +92,10 @@
       <updated>1608742982740</updated>
       <workItem from="1608742988391" duration="11000" />
       <workItem from="1608768894291" duration="129000" />
+      <workItem from="1608771384480" duration="112000" />
+      <workItem from="1608771539426" duration="2906000" />
+      <workItem from="1608833746924" duration="800000" />
+      <workItem from="1608837487054" duration="4229000" />
     </task>
     <servers />
   </component>
@@ -86,6 +114,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
