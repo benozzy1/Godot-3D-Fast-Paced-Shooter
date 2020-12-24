@@ -65,6 +65,7 @@ DrawLine3d="*res://addons/Godot-3D-Lines-master/DrawLine3D.gd"
 
 window/size/width=1280
 window/size/height=720
+window/size/fullscreen=true
 window/vsync/use_vsync=false
 window/stretch/mode="viewport"
 window/stretch/aspect="expand"
@@ -168,5 +169,5 @@ look_right={
 [rendering]
 
 quality/2d/use_pixel_snap=true
-environment/default_clear_color=Color( 0.321569, 0.321569, 0.321569, 1 )
+environment/default_clear_color=Color( 0, 0.509804, 0.509804, 1 )
 environment/default_environment="res://default_env.tres"
