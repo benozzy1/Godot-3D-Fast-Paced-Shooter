@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-enum ResizeDir {
+internal enum ResizeDir {
 	Top,
 	Bottom,
 	Left,
@@ -13,10 +13,18 @@ enum ResizeDir {
 }
 
 public class Window : Control {
+    [Signal] public delegate bool focused();
+
+    [Signal]
+    public delegate bool unfocused();
+    
     [Export] public bool resizable;
     [Export] public float deaccel = 8;
     [Export] public float throwForce = 600;
+    [Export] public bool quitClosesWindow = true;
 
+    private bool _focused;
+    
     private bool _dragging;
     private bool _resizing;
 
@@ -32,6 +40,8 @@ public class Window : Control {
 
     public Vector2 velocity;
 
+    private WindowManager _windowManager;
+
     private Tween _tween;
 
     public override void _Ready() {
@@ -43,6 +53,8 @@ public class Window : Control {
 
         _originalRectPos = RectPosition;
         _originalRectSize = RectSize;
+
+        _windowManager = DisplayManager.GetWindowManager();
 
         ((Control)GetNode("BorderDraggables")).Visible = resizable;
     }
@@ -61,89 +73,95 @@ public class Window : Control {
             velocity.y *= -0.5f;
         if (RectPosition.y < 0)
             velocity.y *= -0.5f;
-        
-        var parent = GetParent() as Control;
-        RectPosition = new Vector2(
-            Mathf.Clamp(RectPosition.x, 0, parent.RectSize.x - RectSize.x),
-            Mathf.Clamp(RectPosition.y, 0, parent.RectSize.y - RectSize.y)
-        );
 
-        GD.Print(_mouseMotion);
+        if (GetParent() is Control parent) {
+            RectPosition = new Vector2(
+                Mathf.Clamp(RectPosition.x, 0, parent.RectSize.x - RectSize.x),
+                Mathf.Clamp(RectPosition.y, 0, parent.RectSize.y - RectSize.y)
+            );
+        }
     }
 
     public override void _Input(InputEvent e) {
-        if (e is InputEventMouseButton btn) {
-            if (!btn.Pressed) {
-                if (_dragging)
-                    velocity = _mouseMotion * throwForce;
+        switch (e) {
+            case InputEventMouseButton btn: {
+                if (!btn.Pressed) {
+                    if (_dragging)
+                        velocity = _mouseMotion * throwForce;
                 
-                _dragging = false;
-                _resizing = false;
-            }
-        }
-        
-        if (e is InputEventMouseMotion mouse) {
-            _mousePos = mouse.Position;
-            _mouseMotion = mouse.Relative.Round();
-            
-            //#print(mouse_pos - (original_rect_position + drag_offset))
-            
-            if (_dragging)
-                RectPosition = mouse.Position + _dragOffset;
-            else if (_resizing) {
-                switch (_resizeDir) {
-                    case ResizeDir.Left:
-                        ResizeLeft(mouse.Position);
-                        break;
-                    case ResizeDir.Right:
-                        ResizeBottom(mouse.Position);
-                        break;
-                    case ResizeDir.Top:
-                        ResizeTop(mouse.Position);
-                        break;
-                    case ResizeDir.Bottom:
-                        ResizeBottom(mouse.Position);
-                        break;
-                    
-                    case ResizeDir.TopRight:
-                        ResizeTop(mouse.Position);
-                        ResizeRight(mouse.Position);
-                        break;
-                    case ResizeDir.TopLeft:
-                        ResizeTop(mouse.Position);
-                        ResizeLeft(mouse.Position);
-                        break;
-                    case ResizeDir.BottomLeft:
-                        ResizeBottom(mouse.Position);
-                        ResizeLeft(mouse.Position);
-                        break;
-                    case ResizeDir.BottomRight:
-                        ResizeBottom(mouse.Position);
-                        ResizeRight(mouse.Position);
-                        break;
+                    _dragging = false;
+                    _resizing = false;
                 }
-            
-            }
 
-            //RectPosition = new Vector2(
+                break;
+            }
+            case InputEventMouseMotion mouse: {
+                _mousePos = mouse.Position;
+                _mouseMotion = mouse.Relative.Round();
+            
+                if (_dragging)
+                    RectPosition = mouse.Position + _dragOffset;
+                else if (_resizing) {
+                    switch (_resizeDir) {
+                        case ResizeDir.Left:
+                            ResizeLeft(mouse.Position);
+                            break;
+                        case ResizeDir.Right:
+                            ResizeBottom(mouse.Position);
+                            break;
+                        case ResizeDir.Top:
+                            ResizeTop(mouse.Position);
+                            break;
+                        case ResizeDir.Bottom:
+                            ResizeBottom(mouse.Position);
+                            break;
+                    
+                        case ResizeDir.TopRight:
+                            ResizeTop(mouse.Position);
+                            ResizeRight(mouse.Position);
+                            break;
+                        case ResizeDir.TopLeft:
+                            ResizeTop(mouse.Position);
+                            ResizeLeft(mouse.Position);
+                            break;
+                        case ResizeDir.BottomLeft:
+                            ResizeBottom(mouse.Position);
+                            ResizeLeft(mouse.Position);
+                            break;
+                        case ResizeDir.BottomRight:
+                            ResizeBottom(mouse.Position);
+                            ResizeRight(mouse.Position);
+                            break;
+                    }
+            
+                }
+
+                //RectPosition = new Vector2(
                 //Mathf.Clamp(RectPosition.x, 0, GetViewportRect().Size.x - RectSize.x),
                 //Mathf.Clamp(RectPosition.y, 0, GetViewportRect().Size.y - RectSize.y)
-            //);
+                //);
+                break;
+            }
         }
     }
+    
+    public void CenterWindow() {
+        RectPosition = GetViewport().Size / 2 - RectSize / 2;
+    }
+
+    #region Resize Methods
 
     private void ResizeTop(Vector2 eventPos) {
         var newPos = RectPosition;
         var newSize = RectSize;
         
-        var mouse_offset = eventPos.y - (_originalRectPos.y + _resizeOffset.y);
-        newSize.y = _originalRectSize.y - mouse_offset;
+        var mouseOffset = eventPos.y - (_originalRectPos.y + _resizeOffset.y);
+        newSize.y = _originalRectSize.y - mouseOffset;
         newPos.y = _originalRectSize.y + _resizeOffset.y - (RectSize.y - _originalRectPos.y) - 1;
 
         RectPosition = newPos;
         RectSize = newSize;
     }
-
     private void ResizeBottom(Vector2 eventPos) {
         var newSize = RectSize;
 
@@ -151,19 +169,17 @@ public class Window : Control {
 
         RectSize = newSize;
     }
-
     private void ResizeLeft(Vector2 eventPos) {
         var newPos = RectPosition;
         var newSize = RectSize;
 
-        var mouse_offset = eventPos.x - (_originalRectPos.x + _resizeOffset.x);
-        newSize.x = _originalRectSize.x - mouse_offset;
+        var mouseOffset = eventPos.x - (_originalRectPos.x + _resizeOffset.x);
+        newSize.x = _originalRectSize.x - mouseOffset;
         newPos.x = _originalRectSize.x + _resizeOffset.x - (RectSize.x - _originalRectPos.x) - 1;
 
         RectPosition = newPos;
         RectSize = newSize;
     }
-
     private void ResizeRight(Vector2 eventPos) {
         var newSize = RectSize;
 
@@ -172,84 +188,84 @@ public class Window : Control {
         RectSize = newSize;
     }
 
+    #endregion
+
+    #region Gui Input Methods
+    
     private void _on_CloseButton_pressed() {
-        Close();
+        if (quitClosesWindow)
+            Close();
     }
-
     private void _OnTitlebarGuiInput(InputEvent e) {
-        if (e is InputEventMouseButton btn) {
-            if (btn.ButtonIndex == (int)ButtonList.Left) {
-                if (btn.Pressed) {
-                    BringToTop();
+        if (!(e is InputEventMouseButton btn)) return; // Don't run if event is not mouse button
+        if (btn.ButtonIndex != (int) ButtonList.Left) return; // Don't run if mouse button is not left
+        if (!btn.Pressed) return; // Don't run if mouse button is not pressed
+        
+        BringToTop();
                     
-                    _originalRectPos = RectPosition;
-                    _dragging = true;
-                    _dragOffset = RectPosition - _mousePos;
+        _originalRectPos = RectPosition;
+        _dragging = true;
+        _dragOffset = RectPosition - _mousePos;
                     
-                    velocity = Vector2.Zero;
-                }
-            }
-        }
+        velocity = Vector2.Zero;
     }
-
     private void _on_Border_gui_input(InputEvent e, string borderSide) {
-        if (e is InputEventMouseButton btn) {
-            if (btn.ButtonIndex == (int)ButtonList.Left && btn.Pressed) {
-                BringToTop();
+        if (!(e is InputEventMouseButton btn)) return; // Don't run if event is not mouse button
+        if (btn.ButtonIndex != (int) ButtonList.Left || !btn.Pressed) return; // Don't run if mouse button is not left
+        
+        BringToTop();
                 
-                _originalRectSize = RectSize;
-                _originalRectPos = RectPosition;
-                _resizing = true;
-                _resizeOffset = RectPosition - _mousePos;
-                
-                if (_resizing) {
-                    switch (borderSide) {
-                        case "top":
-                            _resizeDir = ResizeDir.Top;
-                            break;
-                        case "bottom":
-                            _resizeDir = ResizeDir.Bottom;
-                            break;
-                        case "left":
-                            _resizeDir = ResizeDir.Left;
-                            break;
-                        case "right":
-                            _resizeDir = ResizeDir.Right;
-                            break;
-                        case "top_right":
-                            _resizeDir = ResizeDir.TopRight;
-                            break;
-                        case "bottom_right":
-                            _resizeDir = ResizeDir.BottomRight;
-                            break;
-                        case "top_left":
-                            _resizeDir = ResizeDir.TopLeft;
-                            break;
-                        case "bottom_left":
-                            _resizeDir = ResizeDir.BottomLeft;
-                            break;
-                    }
-                }
-            }
+        _originalRectSize = RectSize;
+        _originalRectPos = RectPosition;
+        _resizing = true;
+        _resizeOffset = RectPosition - _mousePos;
+
+        if (!_resizing) return; // Don't run if not resizing
+        switch (borderSide) {
+            case "top":
+                _resizeDir = ResizeDir.Top;
+                break;
+            case "bottom":
+                _resizeDir = ResizeDir.Bottom;
+                break;
+            case "left":
+                _resizeDir = ResizeDir.Left;
+                break;
+            case "right":
+                _resizeDir = ResizeDir.Right;
+                break;
+            case "top_right":
+                _resizeDir = ResizeDir.TopRight;
+                break;
+            case "bottom_right":
+                _resizeDir = ResizeDir.BottomRight;
+                break;
+            case "top_left":
+                _resizeDir = ResizeDir.TopLeft;
+                break;
+            case "bottom_left":
+                _resizeDir = ResizeDir.BottomLeft;
+                break;
         }
     }
+    private void _on_Content_gui_input(InputEvent e) {
+        if (!(e is InputEventMouseButton btn)) return;
+        if (btn.Pressed && btn.ButtonIndex == 0)
+            BringToTop();
+    }
 
+    #endregion
+    
     public void BringToTop() {
         var parent = GetParent();
         parent.RemoveChild(this);
         parent.AddChild(this);
     }
 
-    private void _on_Content_gui_input(InputEvent e) {
-	    if (e is InputEventMouseButton btn) {
-            if (btn.Pressed && btn.ButtonIndex == 0)
-                BringToTop();
-        }
-    }
-
     public void Open() {
         _tween.Start();
         _tween.InterpolateProperty(this, "modulate", Modulate, new Color(1, 1, 1, 1), 0.25f);
+        CenterWindow();
     }
 
     public void Close() {

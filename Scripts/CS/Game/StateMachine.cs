@@ -1,22 +1,19 @@
 public class StateMachine {
-    public IState currentState;
+    private IState _currentState;
 
     public void Update(float delta) {
-        if (currentState != null) {
-            currentState.Update(delta);
-        }
+        _currentState?.Update(delta);
     }
 
     public void ChangeState(IState newState) {
-        if (currentState != null)
-            currentState.Exit();
-        
-        currentState = newState;
-        currentState.Enter();
+        _currentState?.Exit();
+
+        _currentState = newState;
+        _currentState.Enter();
     }
 
     public void HandleTransitions() {
-        currentState.HandleTransitions();
+        _currentState.HandleTransitions();
     }
 }
 

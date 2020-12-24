@@ -1,16 +1,15 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 public class DisplayManager : Control {
-    const string ScreensDirectory = "res://Scenes/Screens/";
-    const string ScreenSuffix = ".scn";
+    private const string ScreensDirectory = "res://Scenes/Screens/";
+    private const string ScreenSuffix = ".scn";
 
-    public static Node currentScreen;
+    private static List<Screen> _activeScreens = new List<Screen>();
     public Viewport viewport;
 
     private static Control _screensNode;
-
-    private string[] screens;
 
     private static WindowManager _windowManager;
 
@@ -18,10 +17,9 @@ public class DisplayManager : Control {
         SetAnchorsAndMarginsPreset(LayoutPreset.Wide);
         CreateViewport();
 
-        _screensNode = new Control();
-        _screensNode.Name = "Screens";
+        _screensNode = new Control {Name = "Screens"};
         _screensNode.SetAnchorsAndMarginsPreset(LayoutPreset.Wide);
-        _screensNode.MouseFilter = Control.MouseFilterEnum.Ignore;
+        _screensNode.MouseFilter = MouseFilterEnum.Ignore;
         viewport.AddChild(_screensNode);
 
         _windowManager = new WindowManager(this);
@@ -30,39 +28,47 @@ public class DisplayManager : Control {
     }
 
     private void CreateViewport() {
-        var viewportContainer = new ViewportContainer();
-        viewportContainer.Name = "ViewportContainer";
-        
+        var viewportContainer = new ViewportContainer {Name = "ViewportContainer"};
+
         viewportContainer.SetAnchorsAndMarginsPreset(LayoutPreset.Wide);
 
         viewportContainer.Stretch = true;
         viewportContainer.StretchShrink = 2;
         AddChild(viewportContainer);
 
-        viewport = new Viewport();
-        viewport.Name = "Viewport";
-        viewport.Size = new Vector2(640, 360);
-        viewport.TransparentBg = true;
+        viewport = new Viewport {Name = "Viewport", Size = new Vector2(640, 360), TransparentBg = true};
         viewportContainer.AddChild(viewport);
     }
 
-    public static void LoadScreen(string screenName) {
-        var newScreen = ResourceLoader.Load(ScreensDirectory + screenName + ScreenSuffix) as PackedScene;
-        if (newScreen == null) {
+    private static void LoadScreen(string screenName) {
+        var screenScene = ResourceLoader.Load(ScreensDirectory + screenName + ScreenSuffix) as PackedScene;
+        if (screenScene == null) {
             GD.PrintErr("Could not find screen: " + screenName + ScreenSuffix + " in screens folder.");
             return;
         }
 
         CloseAllWindows();
-        if (currentScreen != null)
-            currentScreen.QueueFree();
-        currentScreen = newScreen.Instance();
-        _screensNode.AddChild(currentScreen);
+
+        var newScreen = screenScene.Instance() as Screen;
+        _activeScreens.Add(newScreen);
+        _screensNode.AddChild(newScreen);
+        //_screensNode.MoveChild(_currentScreen, 0);
+
+        Screen activeScreen = null;
+        if (_activeScreens.Count > 1)
+            activeScreen = _activeScreens[_activeScreens.IndexOf(newScreen) - 1];
+        newScreen?.Load(activeScreen);
     }
 
     public static WindowManager GetWindowManager() => _windowManager;
 
     public static void CreateWindow(string windowName) => _windowManager.CreateWindow(windowName);
+    public static void CreateDialog(string windowName) => _windowManager.CreateDialog(windowName);
 
-    public static void CloseAllWindows() => _windowManager.CloseAllWindows();
+    private static void CloseAllWindows() => _windowManager.CloseAllWindows();
+
+    public static void CloseScreen(Screen screen) {
+        screen.Unload();
+        _activeScreens.Remove(screen);
+    }
 }

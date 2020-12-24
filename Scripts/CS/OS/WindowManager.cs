@@ -3,28 +3,26 @@ using System;
 using System.Collections.Generic;
 
 public class WindowManager {
-    const string WindowsDirectory = "res://Scenes/Windows/";
-    const string WindowSuffix = ".res";
+    private const string WindowsDirectory = "res://Scenes/Windows/";
+    private const string DialogsDirectory = "res://Scenes/Windows/Dialog/";
+    private const string WindowSuffix = ".res";
 
-    public List<Window> windows = new List<Window>();
+    private readonly List<Window> _windows = new List<Window>();
+    public List<DialogWindow> dialogWindows = new List<DialogWindow>();
 
     private Window _windowLimitWindow;
-    private Control _windowsNode;
-    private DisplayManager _displayManager;
+    private readonly Control _windowsNode;
 
     public WindowManager(DisplayManager displayManager) {
-        _displayManager = displayManager;
-
-        _windowsNode = new Control();
-        _windowsNode.Name = "Windows";
+        _windowsNode = new Control {Name = "Windows"};
         _windowsNode.SetAnchorsAndMarginsPreset(Control.LayoutPreset.Wide);
         _windowsNode.MouseFilter = Control.MouseFilterEnum.Ignore;
-        _displayManager.viewport.AddChild(_windowsNode);
+        displayManager.viewport.AddChild(_windowsNode);
     }
 
     public void CreateWindow(string windowName) {
-        if (windows.Count > 3) {
-            CreateWindowLimitWindow();
+        if (_windows.Count > 3) {
+            CreateDialog("WindowLimitDialog");
             return;
         }
 
@@ -38,39 +36,38 @@ public class WindowManager {
         _windowsNode.AddChild(windowScene);
 
         var windowClass = windowScene as Window;
-        windows.Add(windowClass);
-        windowClass.Open();
+        _windows.Add(windowClass);
+        windowClass?.Open();
     }
 
     public void CloseAllWindows() {
-        foreach (var window in windows) {
+        foreach (var window in _windows) {
             window.Close();
         }
     }
 
-    private void CreateWindowLimitWindow() {
+    public void CreateDialog(string windowName) {
         if (_windowLimitWindow != null) {
             try {
-                _windowLimitWindow.RectPosition = _windowLimitWindow.GetViewport().Size / 2 - _windowLimitWindow.RectSize / 2;
+                _windowLimitWindow.CenterWindow();
+                _windowLimitWindow.BringToTop();
                 _windowLimitWindow.velocity = Vector2.Zero;
-            } catch (ObjectDisposedException e) {
+            } catch (ObjectDisposedException) {
                 _windowLimitWindow = null;
             }
         }
 
-        if (_windowLimitWindow == null) {
-            var newWindow = ResourceLoader.Load(WindowsDirectory + "WindowLimitWindow" + WindowSuffix) as PackedScene;
-            if (newWindow == null) {
-                GD.PrintErr("Could not find Window Limit window.");
-                return;
-            }
-
-            var windowScene = newWindow.Instance();
-            _windowsNode.AddChild(windowScene);
-            _windowLimitWindow = windowScene as Window;
-
-            var windowClass = windowScene as Window;
-            windowClass.Open();
+        if (_windowLimitWindow != null) return;
+        if (!(ResourceLoader.Load(DialogsDirectory + windowName + WindowSuffix) is PackedScene newWindow)) {
+            GD.PrintErr("Could not find window dialog: " + windowName + WindowSuffix + " in dialogs folder.");
+            return;
         }
+
+        var windowScene = newWindow.Instance();
+        _windowsNode.AddChild(windowScene);
+        _windowLimitWindow = windowScene as Window;
+
+        var windowClass = windowScene as Window;
+        windowClass?.Open();
     }
 }

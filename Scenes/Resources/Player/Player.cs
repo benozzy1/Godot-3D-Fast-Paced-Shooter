@@ -2,17 +2,16 @@ using Godot;
 using System;
 
 public class Player : Spatial {
-    [Export] public float walkSpeed = 8f;
-    [Export] public float sprintSpeed = 11F;
+    [Export] public float speed = 8f;
     [Export] public float acceleration = 12f;
     [Export] public float airAcceleration = 2f;
     [Export] public float gravity = 30f;
     [Export] public float wallGravity = 10f;
-    [Export] public float jumpForce = 9f;
+    [Export] public float jumpForce = 10f;
 
     [Export] public float cameraTilt = 0.25f;
     [Export] public float weaponSmoothing = 18f;
-    [Export] public float walkAnimSpeed = 1f;
+    [Export] public float walkAnimSpeed = 1.25f;
 
     [Export] public AudioStream[] footstepSounds;    
 
@@ -191,15 +190,15 @@ public class Player : Spatial {
     }
 
     private Vector3 _relativeVelocity;
-    public void MoveRelative(float walkSpeed, float accel) {
+    public void MoveRelative(float speed, float accel) {
         //var dir = _moveDirection.Rotated(Vector3.Up, _headParent.Rotation.y);
         var dir = _moveDirection.Rotated(Vector3.Up, _headParent.Rotation.y).Rotated(Vector3.Up, Mathf.Deg2Rad(90)).Cross(_lastFloorNormal);
-        //_relativeVelocity = _relativeVelocity.LinearInterpolate(dir * walkSpeed, accel);
+        //_relativeVelocity = _relativeVelocity.LinearInterpolate(dir * speed, accel);
 
-        velocity.x = Mathf.Lerp(velocity.x, dir.x * walkSpeed, accel);
-        velocity.z = Mathf.Lerp(velocity.z, dir.z * walkSpeed, accel);
+        velocity.x = Mathf.Lerp(velocity.x, dir.x * speed, accel);
+        velocity.z = Mathf.Lerp(velocity.z, dir.z * speed, accel);
         if (kinematicBody.IsOnFloor())
-            velocity.y = Mathf.Lerp(velocity.y, dir.y * walkSpeed, accel);
+            velocity.y = Mathf.Lerp(velocity.y, dir.y * speed, accel);
     }
 
     private void DrawLine(Vector3 from, Vector3 to, Color color) {
@@ -271,13 +270,4 @@ public class Player : Spatial {
     public void Land(float landForce) {
         cameraAnimator.Land(landForce);
     }
-
-    public float GetMoveSpeed(){
-        if(Input.IsActionPressed("sprint"))
-            return sprintSpeed;
-        else
-            return walkSpeed;
-    }
 }
-
-    

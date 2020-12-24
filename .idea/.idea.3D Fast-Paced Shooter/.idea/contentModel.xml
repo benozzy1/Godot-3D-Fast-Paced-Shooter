@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="$USER_HOME$/.cache/JetBrains/Rider2020.3/resharper-host/local/Transient/Rider/v203/SolutionCaches/_3D Fast-Paced Shooter.1440729043.00" t="ExcludeRecursive" />
+    <e p="$PROJECT_DIR$" t="IncludeRecursive">
+      <e p=".mono" t="Include">
+        <e p="temp" t="Include">
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Debug" t="Include">
+              <e p="3D Fast-Paced Shooter.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+      </e>
+      <e p="3D Fast-Paced Shooter.csproj" t="IncludeRecursive" />
+      <e p="3D Fast-Paced Shooter.sln" t="IncludeFlat" />
+      <e p="Scenes" t="Include">
+        <e p="Resources" t="Include">
+          <e p="Player" t="Include">
+            <e p="Player.cs" t="Include" />
+            <e p="PlayerCameraAnimator.cs" t="Include" />
+            <e p="PlayerStateMachine.cs" t="Include" />
+            <e p="States" t="Include">
+              <e p="PlayerAirState.cs" t="Include" />
+              <e p="PlayerGrappleState.cs" t="Include" />
+              <e p="PlayerGroundState.cs" t="Include" />
+              <e p="PlayerWallState.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+      </e>
+      <e p="Scripts" t="Include">
+        <e p="CS" t="Include">
+          <e p="Game" t="Include">
+            <e p="Gameplay.cs" t="Include" />
+            <e p="Settings.cs" t="Include" />
+            <e p="StateMachine.cs" t="Include" />
+            <e p="TextContainer.cs" t="Include" />
+          </e>
+          <e p="OS" t="Include">
+            <e p="DisplayManager.cs" t="Include" />
+            <e p="Window.cs" t="Include" />
+            <e p="WindowManager.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="packages" t="ExcludeRecursive" />
+    </e>
+  </component>
+</project>

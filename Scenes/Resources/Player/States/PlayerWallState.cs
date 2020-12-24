@@ -32,7 +32,7 @@ public class PlayerWallState : IState {
             }
         }
 
-        _player.MoveRelative(_player.GetMoveSpeed(), _player.airAcceleration * delta);
+        _player.MoveRelative(_player.speed, _player.airAcceleration * delta);
     }
 
     public void HandleTransitions() {
